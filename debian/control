@@ -26,6 +26,7 @@ Depends: debianutils (>= 1.13.1)
        , wget
        , rsync
        , ca-certificates
+       , libjs-jquery-ui
        , locales
        , perl-suid | perl
        , postfix-mysql
