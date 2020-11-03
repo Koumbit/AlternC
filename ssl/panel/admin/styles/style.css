@@ -136,9 +136,6 @@ pre {
   vertical-align: middle;
   line-height: 15px;
 }
-input.ui-state-hover {
-    font-weight: normal;
-}
 
 span.inb {
   display: inline-block;
@@ -286,7 +283,6 @@ img {
 }
 .alert > p, .alert > ul {
     margin-bottom: 0;
-    margin-top: 0;
 }
 .alert > p + p {
     margin-top: 5px;
@@ -348,14 +344,10 @@ img {
 .alert-danger a{
     color: #6F2B2A;
 }
-.alert-danger-tr {
-  background-color: #F2DEDE !important;
-}
-
 
 /* Alert icons */
 #content .alert {
-    background-position: 12px center;
+    background-position: 12px 10px;
     background-repeat: no-repeat;
     padding-left: 48px;
 }
@@ -383,14 +375,6 @@ img {
   color: red;
 }
 
-.mandatory {
-  color: red;
-  font-weight: bold;
-  vertical-align: super;
-  font-size: small;
-  line-height: normal;
-}
-
 .code {
   font-size: 16px;
   font-family: Courier New, Fixed;
@@ -411,19 +395,6 @@ img {
   border-radius: 10px;  
   box-shadow: 1px 1px 15px #555;
   background-color: #F0F0F4;
-}
-
-@media screen and (min-width: 1000px) {
-  #global {
-    margin: 20px 50px;
-    width: auto;
-    display: flex;
-  }
-
-  #content {
-    flex: 1;
-    width: auto;
-  }
 }
 
 /* Main container */
@@ -614,11 +585,11 @@ table.searchtable td {
 
 }
 
-#newdomwww, #sub, #usernpfx, #dbnpfx, #account_namefx {
+#newdomwww, #sub, #usernpfx, #dbnpfx {
   border-right: 0;
   padding-right: 0;
 }
-#newdomain, #newsubname, #usern, #dbn, #account_name {
+#newdomain, #newsubname, #usern, #dbn {
   border-left: 0;
   padding-left: 0;
 }
@@ -805,217 +776,231 @@ div.progress-bar div.txt {
   background-color: #BFD3E1;
 }
 
-.ui-tabs .ui-tabs-nav .edit .ui-tabs-anchor, .edit a, a.edit, input.edit {
+.edit a, a.edit, input.edit {
   background-image: url(../images/edit.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .view .ui-tabs-anchor, .view a, a.view, input.view {
+.view a, a.view, input.view {
   background-image: url(../images/code.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .delete .ui-tabs-anchor, .delete a, a.delete, input.delete {
+.delete a, a.delete, input.delete {
   background-image: url(../icon/delete.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .lock .ui-tabs-anchor, .lock a, a.lock, input.lock {
+.lock a, a.lock, input.lock {
   background-image: url(../icon/encrypted.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .settings .ui-tabs-anchor, .settings a, a.settings, input.settings {
+.settings a, a.settings, input.settings {
   background-image: url(../icon/settings.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .ok .ui-tabs-anchor, .ok a, a.ok, input.ok {
+.ok a, a.ok, input.ok {
   background-image: url(../icon/ok.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .cancel .ui-tabs-anchor, .cancel a, a.cancel, input.cancel {
+.cancel a, a.cancel, input.cancel {
   background-image: url(../icon/cancel.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .add .ui-tabs-anchor, .add a, a.add, input.add {
+.add a, a.add, input.add {
   background-image: url(../icon/add.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .configure .ui-tabs-anchor, .configure a, a.configure, input.configure {
+.configure a, a.configure, input.configure {
   background-image: url(../icon/configure.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .save .ui-tabs-anchor, .save a, a.save, input.save {
+.edit a, a.edit, input.edit {
+  background-image: url(../icon/edit.png);
+  background-repeat: no-repeat;
+  background-position: 8px 3px;
+  padding-left: 30px;
+}
+
+.save a, a.save, input.save {
   background-image: url(../icon/save.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .down .ui-tabs-anchor, .down a, a.down, input.down {
+.down a, a.down, input.down {
   background-image: url(../icon/save.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .up .ui-tabs-anchor, .up a, a.up, input.up {
+.up a, a.up, input.up {
   background-image: url(../icon/up.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .back .ui-tabs-anchor, .back a, a.back, input.back {
+.back a, a.back, input.back {
   background-image: url(../icon/back.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .admin .ui-tabs-anchor, .admin a, a.admin, input.admin, .admin-menu .menu-title {
+.admin a, a.admin, input.admin, .admin-menu .menu-title {
   background-image: url(../images/admin.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .home .ui-tabs-anchor, .home a, a.home, input.home, .home-menu .menu-title {
+.home a, a.home, input.home, .home-menu .menu-title {
   background-image: url(../images/home.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .dom .ui-tabs-anchor, .dom a, a.dom, input.dom, .dom-menu .menu-title {
+.dom a, a.dom, input.dom, .dom-menu .menu-title {
   background-image: url(../images/dom.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .mail .ui-tabs-anchor, .mail a, a.mail, input.mail, .mail-menu .menu-title {
+.mail a, a.mail, input.mail, .mail-menu .menu-title {
   background-image: url(../images/mail.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .bro .ui-tabs-anchor, .bro a, a.bro, input.bro, .bro-menu .menu-title {
+.bro a, a.bro, input.bro, .bro-menu .menu-title {
   background-image: url(../images/folder.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .hta .ui-tabs-anchor, .hta a, a.hta, input.hta, .hta-menu .menu-title {
+.hta a, a.hta, input.hta, .hta-menu .menu-title {
   background-image: url(../images/password.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .ftp .ui-tabs-anchor, .ftp a, a.ftp, input.ftp, .ftp-menu .menu-title {
+.ftp a, a.ftp, input.ftp, .ftp-menu .menu-title {
   background-image: url(../images/ftp.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .cron .ui-tabs-anchor, .cron a, a.cron, input.cron, .cron-menu .menu-title {
+.cron a, a.cron, input.cron, .cron-menu .menu-title {
   background-image: url(../images/schedule.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .lxc .ui-tabs-anchor, .lxc a, a.lxc, input.lxc, .lxc-menu .menu-title {
+.lxc a, a.lxc, input.lxc, .lxc-menu .menu-title {
   background-image: url(../images/ssh.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .mysql .ui-tabs-anchor, .mysql a, a.mysql, input.mysql, .mysql-menu .menu-title {
+.mysql a, a.mysql, input.mysql, .mysql-menu .menu-title {
   background-image: url(../images/mysql.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .quota .ui-tabs-anchor, .quota a, a.quota, input.quota, .quota-menu .menu-title {
+.quota a, a.quota, input.quota, .quota-menu .menu-title {
   background-image: url(../images/quota.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .authip .ui-tabs-anchor, .authip a, a.authip, input.authip, .authip-menu .menu-title {
+.authip a, a.authip, input.authip, .authip-menu .menu-title {
   background-image: url(../images/ip.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .log .ui-tabs-anchor, .log a, a.log, input.log, .log-menu .menu-title {
+.log a, a.log, input.log, .log-menu .menu-title {
   background-image: url(../images/logs.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .help .ui-tabs-anchor,.help a, a.help, input.help, .help-menu .menu-title {
+.help a, a.help, input.help, .help-menu .menu-title {
   background-image: url(../images/help.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .lang .ui-tabs-anchor, .lang a, a.lang, input.lang, .lang-menu .menu-title {
+.lang a, a.lang, input.lang, .lang-menu .menu-title {
   background-image: url(../images/lang.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .mem .ui-tabs-anchor, .mem a, a.mem, input.mem, .mem-menu .menu-title {
+.mem a, a.mem, input.mem, .mem-menu .menu-title {
   background-image: url(../images/settings.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .logout .ui-tabs-anchor, .logout a, a.logout, input.logout, .logout-menu .menu-title {
+.logout a, a.logout, input.logout, .logout-menu .menu-title {
   background-image: url(../images/exit.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
   padding-left: 30px;
 }
 
-.ui-tabs .ui-tabs-nav .filter .ui-tabs-anchor, .filter a, a.edit, input.filter {
+.ssl a, a.ssl, input.ssl, .ssl-menu .menu-title {
+  background-image: url(../images/ssl.png);
+  background-repeat: no-repeat;
+  background-position: 8px 3px;
+  padding-left: 30px;
+}
+
+.filter a, a.edit, input.filter {
   background-image: url(../icon/filter.png);
   background-repeat: no-repeat;
   background-position: 8px 3px;
@@ -1078,115 +1063,10 @@ body .ui-widget-content a {
   outline:none;
 }
 
-.info-toggle {
-  background: none repeat scroll 0 0 #CFE3F1;
-  border: 1px solid #CCCCCC;
-  border-radius: 15px 15px 15px 15px;
-  margin: 16px 0;
-  padding: 0 16px;
+textarea.cert {
+    font-family: Courier New, Courier, monospace, fixed;
+    font-size: 12px;
 }
-
-th.headerSortUp { 
-  background-image: url(../images/asc.gif); 
-  background-repeat: no-repeat;
-  background-position: right; 
-  cursor: pointer; 
-  background-color: #3399FF; 
-} 
-
-th.headerSortDown { 
-  background-image: url(../images/desc.gif); 
-  background-repeat: no-repeat;
-  background-position: right; 
-  cursor: pointer; 
-  background-color: #3399FF; 
-} 
-
-.sub-disabled {
-  text-decoration: line-through;
-}
-
-.login_page #global {
-        max-width: 1000px !important;
-        margin: 20px auto !important;
-        width: auto !important;
-}
-
-
-
-.login_page .unsecure {
-        font-size: 1.1em;
-        width: 90%;
-        margin-bottom: 1em;
-}
-
-.login_page #content {
-        padding: 10px;
-        width: auto;
-}
-.login_page #logo, .login_page .alternc_powered {
-        text-align:center;
-}
-
-.login_page .block_list {
-        display: flex;
-        flex-flow: row wrap;
-}
-.login_page .block_login_page {
-        margin: 10px;
-        width: 420px;
-}
-
-.login_page .menu-box .menu-title {
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.2em;
-}
-
-.login_page .menu-box .menu-content {
-        margin: 15px;
-}
-.login_page .menu-box .menu-content > div {
-        margin-bottom: 7px;
-}
-.login_page .menu-box .menu-content label {
-        width: 30%;
-        display: inline-block;
-}
-.login_page .menu-box .menu-content input {
-        width: 60%;
-}
-.login_page .menu-box .menu-content .submit {
-        text-align: center;
-}
-.login_page .menu-box .menu-content input[type='submit']{
-        width: 100px;
-        height: 2em;
-}
-
-.toggle_menu {
-	display: none;
-	position: fixed;
-	top: 10px;
-	right: 10px;
-	z-index: 1000;
-}
-
-@media (max-width:980px) {
-        .login_page .block_login_page {
-                width: 100%;
-        }
-
-        .login_page #global {
-                margin: 0 !important;
-        }
-	#global {
-		display: block;
-		width: auto;
-	}
-
-	#menu, #content {
-		float: none;
-		width:auto;
-	}
+textarea[readonly='readonly'] {
+  background-color: #ddd;
 }
