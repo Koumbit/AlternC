@@ -28,7 +28,6 @@ if (!isset($charset) || ! $charset) $charset="UTF-8";
 require_once("html-head.php");
 ?>
 <body>
-bro_editor
 <?php
 
 if ($isinvited && isset($oldid) && !empty($oldid) && $oldid!=$cuid ) {
