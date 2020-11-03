@@ -1,3 +1,17 @@
+alternc (3.3.12+nmu1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix database information being readable by other users
+  * Add password reset request via e-mail
+  * Fix matomo integration when there are more than 100 sites
+  * Hide matomo users with access to a site but aren't managed by AlternC
+  * Update apache configuration for apache 2.4
+  * Do not re-write .well-known URLs to HTTPS
+  * Remove 32 character length limitation on e-mail password fields
+  * Use javascript from debian packages
+
+ -- Kienan Stewart <kienan@koumbit.org>  Tue, 03 Nov 2020 13:34:24 -0500
+
 alternc (3.3.11+nmu2) stable; urgency=low
 
   * Fix opendkim service configuration when running alternc.install
