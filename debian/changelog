@@ -1,3 +1,10 @@
+alternc (3.3.12+nmu2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix API bootstrap to make it minimally usable
+
+ -- Gabriel Filion <gabriel@koumbit.org>  Thu, 25 Feb 2021 17:00:20 -0500
+
 alternc (3.3.12+nmu1) unstable; urgency=medium
 
   * Non-maintainer upload.
