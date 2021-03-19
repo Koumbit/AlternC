@@ -584,10 +584,9 @@ class m_mysql {
         return $c;
     }
 
-    
     function get_defaultsparam($dbn) {
         global $db, $mem, $msg, $cuid;
-        $msg->debug("mysql", "getdefaults");
+        $msg->log("mysql", "getdefaults");
 
         $login=$mem->user["login"];
         # The first condition allows us to access our "default" database, where the
