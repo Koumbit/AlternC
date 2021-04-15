@@ -5637,10 +5637,10 @@ msgstr ""
 msgid "Show my quotas"
 msgstr "Quotas du compte AlternC"
 
-#: ../class/m_quota.php:82
+#: ../class/m_quota.php:83
 #, php-format
 msgid "%s%% of %s"
-msgstr "%s% de %s"
+msgstr "%s%% de %s"
 
 #: ../class/m_quota.php:82 ../class/m_quota.php:121
 msgid "quota_"
