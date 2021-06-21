@@ -29,8 +29,8 @@ include_once("head.php");
 $userslist = $piwik->users_list();
 $quotapiwik = $quota->getquota('piwik');
 
-// TODO - Put the limit of piwik users (here at 3) as a variable in alternC
-if ($quotapiwik['t'] > 0 && count($userslist) < 3) {
+// TODO - Put the limit of piwik users (here at 10) as a variable in alternC
+if ($quotapiwik['t'] > 0 && count($userslist) < 10) {
 ?>
 <h3><?php __("Create a new piwik account");?></h3>
 <?php
