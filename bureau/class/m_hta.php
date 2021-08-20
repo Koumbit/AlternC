@@ -88,7 +88,7 @@ class m_hta {
             # The .htaccess file already exists, and we don't try to overwrite the existing
             # contents, therefore we inform that they need to make the modifications to
             # the htaccess file manually.
-            $msg->raise("ALERT", "hta", _("The .htaccess file already existed in '%s', you must add the following lines manually to '%s'\n"), array($dir, $absolute . ".htaccess"));
+            $msg->raise("ALERT", "hta", _("The .htaccess file already existed in '%s', you must add the following lines manually to '%s'\n"), array($dir, $dir . "/.htaccess"));
             $msg->raise("ALERT", "hta", $param);
         }
         if (!file_exists("$absolute/.htpasswd")) {
