@@ -28,8 +28,8 @@ require_once("../class/config.php");
 $userslist = $piwik->users_list();
 $quotapiwik = $quota->getquota('piwik');
 
-if (!($quotapiwik['t'] > 0 && count($userslist) < 3)) {
-	$msg->raise("ERROR", "piwik", _("You cannot add any new Piwik account, your quota is over.")." ("._("Max. 3 accounts").")");
+if (!($quotapiwik['t'] > 0 && count($userslist) < 10)) {
+	$msg->raise("ERROR", "piwik", _("You cannot add any new Piwik account, your quota is over.")." ("._("Max. 10 accounts").")");
 }
 
 $fields = array (
