@@ -103,8 +103,9 @@ pipeline {
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                                 sh "${podman} ${image} tests/shellcheck.sh > shellcheck.xml"
                             }
-                            junit 'shellcheck.xml'
                             sh 'cat shellcheck.xml'
+                            // This fails if the file isn't produced for some reason.
+                            junit 'shellcheck.xml'
                         }
                     }
                     stage('phpcs') {
@@ -113,8 +114,8 @@ pipeline {
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                                 sh "${podman} ${image} phpcs --report=checkstyle /target > phpcs.xml"
                             }
-                            junit 'phpcs.xml'
                             sh 'cat phpcs.xml'
+                            junit 'phpcs.xml'
                         }
                     }
                     stage('phpunit') {
@@ -128,10 +129,10 @@ pipeline {
                                     sh "${podman} -v \$(pwd)/report:/output --env CLOVER=${coverage_file} --env JUNIT=${log_file} ${image} tests/phpunit.sh"
                                 }
                             }
-                            junit 'report/phpunit.xml'
                             sh 'cat report/phpunit.xml'
-                            junit 'report/clover.xml'
+                            junit 'report/phpunit.xml'
                             sh 'cat report/clover.xml'
+                            junit 'report/clover.xml'
                         }
                     }
                     stage('install from package') {
