@@ -4,7 +4,7 @@
 if [ "$#" -eq 0 ]
 then
 	echo -n "Please enter the login : "
-	read LOGIN
+	read -r LOGIN
 else
 	LOGIN="$1"
 fi
@@ -12,7 +12,7 @@ fi
 # Check that the login exists : 
 MYSQL="mysql  --defaults-file=/etc/alternc/my.cnf --skip-column-name alternc -B -e "
 
-USERID="`$MYSQL "SELECT uid FROM membres WHERE login='${LOGIN}'"`"
+USERID="$($MYSQL "SELECT uid FROM membres WHERE login='${LOGIN}'")"
 
 if [ ! "$USERID" ]
 then
@@ -25,23 +25,23 @@ then
 	then
 		echo "You may try 'admin' instead (new alternc)"
 	fi	
-	exit -1
+	exit 1
 fi
 
 
 echo -n "Please enter the new password : "
-read -s PASS
+read -r -s PASS
 echo 
 echo -n "Please confirm the new password : "
-read -s PASS2
+read -r -s PASS2
 echo
 if [ "$PASS" != "$PASS2" ]
 then
 	echo "Passwords are differents, aborting"
-	exit -2
+	exit 2
 fi
 
-RND="`echo -n $RANDOM $RANDOM $RANDOM`"
+RND="$(echo -n $RANDOM $RANDOM $RANDOM)"
 $MYSQL "UPDATE membres SET pass=ENCRYPT('$PASS',CONCAT('\$1\$',MD5('$RND'))) WHERE uid='$USERID'"
 if [ "$?" ]
 then

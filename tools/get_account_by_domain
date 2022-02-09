@@ -27,9 +27,7 @@
 # Purpose of file: gives account by domains or sub-domains
 # ----------------------------------------------------------------------
 #
-PATH=""
 PROG_NAME=get_account_by_domain
-PROG_VERSION=0.1.0
 ALTERNC_ETC=/etc/alternc
 ALTERNC_CONF_FILE=$ALTERNC_ETC/local.sh
 export TEXTDOMAIN=alternc-admintools
@@ -56,28 +54,33 @@ done
 # Uses gettext and mo files.
 # Don't change these messages, change the .po file instead.
 HELP=$($gettext "Gives account hosting domain or sub-domain.")
-USAGE=`$printf "$($gettext "Usage: %s [domain|sub-domain].")" $PROG_NAME`
-NOT_FOUND_MSG=$($gettext "does not exist.")
+USAGE=$($printf "$($gettext "Usage: %s [domain|sub-domain].")" $PROG_NAME)
 NON_ROOT_MSG=$($gettext "You have to be root (uid 0) to execute this program.")
-MISSING_PROG=$($gettext "Unable to execute")
-MISSING_CONF_FILE=`$printf "$($gettext "Can't find %s. Are you sure AlterncC is properly installed?")" $ALTERNC_CONF_FILE`
-MYSQL_UNREACHABLE_DATABASE=`$printf "$($gettext "Cannot access accounts database. Please check either %s or Mysql state.")" $ALTERNC_CONF_FILE`
+MISSING_CONF_FILE=$($printf "$($gettext "Can't find %s. Are you sure AlterncC is properly installed?")" $ALTERNC_CONF_FILE)
+MYSQL_UNREACHABLE_DATABASE=$($printf "$($gettext "Cannot access accounts database. Please check either %s or Mysql state.")" $ALTERNC_CONF_FILE)
 
 
 #-------------------------
 # Main
 #-------------------------
 # Must be root
-[ "`$id -u`" != "0" ] && { echo $NON_ROOT_MSG ; exit 1 ; }
+[ "$($id -u)" != "0" ] && { echo "$NON_ROOT_MSG" ; exit 1 ; }
 # Must have minimum 1 parameter
-[ -z "$1" ] && { echo $USAGE ; exit 1 ; }
+[ -z "$1" ] && { echo "$USAGE" ; exit 1 ; }
 # Handle -h and --help flags
-[ "$1" = "-h" ] || [ "$1" = "--help" ] && { echo $HELP ; echo $USAGE ; exit 0 ; }
+[ "$1" = "-h" ] || [ "$1" = "--help" ] && { echo "$HELP" ; echo "$USAGE" ; exit 0 ; }
 # Have to get AlternC conf file :
-! [ -f "$ALTERNC_CONF_FILE" ] && { echo $MISSING_CONF_FILE ; exit 1 ; } || . $ALTERNC_CONF_FILE
+if ! [ -f "$ALTERNC_CONF_FILE" ] ; then
+    echo "$MISSING_CONF_FILE"
+    exit 1
+fi
+# shellcheck disable=SC1090
+. "$ALTERNC_CONF_FILE"
 mysql="$mysql --defaults-file=/etc/alternc/my.cnf"
-$mysql -e "desc domaines;" > /dev/null 2>&1
-[ "$?" != 0 ] && { echo "$MYSQL_UNREACHABLE_DATABASE" ; exit 1 ; }
+if ! $mysql -e "desc domaines;" > /dev/null 2>&1 ; then
+    echo "$MYSQL_UNREACHABLE_DATABASE"
+    exit 1
+fi
 
 # Does the stuff
 $mysql -B -N -e "select concat(a.login, \" (\", a.mail, \")\") from membres a, sub_domaines b where a.uid = b.compte and concat(if(sub=\"\", \"\", concat(sub, \".\")), domaine)  = \"${1}\";"

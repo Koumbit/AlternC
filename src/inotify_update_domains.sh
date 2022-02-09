@@ -2,6 +2,7 @@
 
 # Launch update_domains.sh if $INOTIFY_UPDATE_DOMAIN exist
 
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 LOGGER="/usr/bin/logger"

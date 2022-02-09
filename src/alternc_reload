@@ -41,7 +41,7 @@ umask 022
 DOMAIN_LOG_FILE="/var/log/alternc/update_domains.log"
 exec >>"$DOMAIN_LOG_FILE" 2>&1
 
-if [ `whoami` = 'root' ]; then
+if [ "$(whoami)" = 'root' ]; then
   sudo=""
 else
   sudo="sudo"
@@ -60,9 +60,9 @@ dns_restart() {
 }
 
 RELOAD_ZONES="$*"
-echo $RELOAD_ZONES
+echo "$RELOAD_ZONES"
 
-if [ ! -z "$RELOAD_ZONES" ]; then
+if [ -n "$RELOAD_ZONES" ]; then
   for zone in $RELOAD_ZONES; do
     case $zone in
       "all")

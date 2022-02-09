@@ -2,6 +2,7 @@
 
 # Launch do_actions.php if $INOTIFY_DO_ACTION exist
 
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 LOGGER="/usr/bin/logger"

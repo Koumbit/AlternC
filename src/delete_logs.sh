@@ -11,6 +11,7 @@ for CONFIG_FILE in \
         echo "Can't access $CONFIG_FILE."
         exit 1
     fi
+    # shellcheck disable=SC1090
     . "$CONFIG_FILE"
 done
 

@@ -24,10 +24,10 @@ if [ ! -x /usr/bin/tx ] ; then
   exit 1
 fi
 
-pushd debian
+pushd debian || exit 1
 echo "Update of PO files in debian/"
 debconf-updatepo
-popd
+popd || exit 1
 
 pushd ..
 
@@ -36,23 +36,24 @@ langs="fr_FR de_DE en_US es_ES pt_BR it_IT nl_NL"
 # external repositories : 
 for project in alternc alternc-mailman
 do
-    pushd "$project/bureau/locales"
+    pushd "$project/bureau/locales" || exit 1
     make
-    popd
+    popd || exit 1
 done
 
-# internal po files : 
-for subproject in awstats 
+# internal po files :
+# shellcheck disable=SC2043
+for subproject in awstats
 do
-    pushd "alternc/$subproject/bureau/locales"
+    pushd "alternc/$subproject/bureau/locales" || exit 1
     make
-    popd
+    popd || exit 1
 done
 
 # now merge all the po's for each language
 for lang in $langs
 do
-    sublang="`echo $lang | cut -c 1-2`"
+    sublang="$(echo "$lang" | cut -c 1-2)"
     echo "doing lang $lang"
     rm -rf "alternc/tmp.$lang"
     mkdir "alternc/tmp.$lang"
@@ -70,13 +71,13 @@ do
 	"alternc/awstats/bureau/locales/$lang/LC_MESSAGES/aws.po" \
 	"alternc/tmp.$lang/" 
     # now we have all .po files in one folder, merge them into one big catalog: 
-    msgcat --use-first -o "alternc/lang/${lang}.po" alternc/tmp.$lang/*
+    msgcat --use-first -o "alternc/lang/${lang}.po" alternc/tmp."$lang"/*
     rm -rf "alternc/tmp.$lang"
    echo "done"
 done
 
 # Now pushing po files into transifex website:
-cd alternc/lang/
-tx push -s 
+cd alternc/lang/ || exit 1
+tx push -s
 
-popd
+popd || exit 1

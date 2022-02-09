@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Get some vars
+# shellcheck disable=SC1091
 . /usr/lib/alternc/functions.sh
 
 echo "This script will rebuild all web configuration and regenerate DNS."
 echo "Use --force to skip confirmation"
 
 if [ ! "$1" == "--force" ] ; then 
-  read -n1 -p "Continue (y/n)? "
+  read -r -n1 -p "Continue (y/n)? "
   [[ $REPLY = [yY] ]] ||  exit 1
 fi
 

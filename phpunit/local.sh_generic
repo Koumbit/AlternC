@@ -3,7 +3,7 @@
 # AlternC - Web Hosting System - Configuration
 # This file will be modified on package configuration
 # (e.g. upgrade or dpkg-reconfigure alternc)
-
+# shellcheck disable=SC2034
 # Hosting service name
 HOSTING="AlternC"
 

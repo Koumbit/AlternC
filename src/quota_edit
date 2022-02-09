@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source /etc/alternc/local.sh
 set -x
 # Set disk quota to an user
@@ -7,8 +8,6 @@ set -x
 MID=$1
 SIZE=$2
 AWK=/usr/bin/awk
-MOUNT=/bin/mount
-SED=/bin/sed
 QUOTA=/usr/sbin/setquota
 DF=/bin/df
 
@@ -21,7 +20,8 @@ if [ $# -ne 2 ] || [[ ! "$MID" =~ ^[0-9]+$ ]] || [[ ! "$SIZE" =~ ^[0-9]+$ ]]; th
   exit 1
 fi
 
-DATA_PART=`$DF -P "${ALTERNC_HTML}" 2>/dev/null | $AWK 'NR==2 { print $NF }'`
+# shellcheck disable=SC2016
+DATA_PART=$($DF -P "${ALTERNC_HTML}" 2>/dev/null | $AWK 'NR==2 { print $NF }')
 
 if [[ ! -e $DATA_PART"/aquota.group" ]]; then
   echo "Group quota are not enabled on $DATA_PART filesystem "
@@ -29,6 +29,6 @@ if [[ ! -e $DATA_PART"/aquota.group" ]]; then
 fi
 
 
-sudo $QUOTA -r -g $MID $SIZE 0 0 0 $DATA_PART 2>/dev/null || echo "Group quota are not enabled on $ALTERNC_HTML." >&2
+sudo $QUOTA -r -g "$MID" "$SIZE" 0 0 0 "$DATA_PART" 2>/dev/null || echo "Group quota are not enabled on $ALTERNC_HTML." >&2
 
 

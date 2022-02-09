@@ -13,6 +13,7 @@ if [ ! -r "$ALTERNC_CONFIG_FILE" ]; then
     echo "Can't access $ALTERNC_CONFIG_FILE."
     exit 1
 fi
+# shellcheck disable=SC1090
 . "$ALTERNC_CONFIG_FILE"
 
 mysql_query "update address a, domaines d, mailbox m set m.lastlogin=now() where a.domain_id=d.id and m.address_id=a.id and concat_ws('@',a.address,d.domaine) = '$USER';"

@@ -36,11 +36,12 @@
 #   for sync script
 set -e
 
-# Get mysql user and password : 
+# Get mysql user and password :
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 # get the date of the day
-DATE=`date +"%Y%m%d"`
+DATE=$(date +"%Y%m%d")
 
 # echo function, used for output wrapping when run in daemon 
 # mode.
@@ -77,8 +78,8 @@ print() {
     #     => print on log file if $DAEMON set to 'ON', on stdout if not
     if [ -z "$log_level" ] || 
     [ "$log_level" == "error" ] ||
-    [ "$DEBUG" == "ON"  -a  "$log_level" == "debug" ]  ||
-    [ "$log_level" == "info" -a  "$VERBOSE" == "ON" ] ;
+    [ "$DEBUG" == "ON"  ] && [ "$log_level" == "debug" ]  ||
+    [ "$log_level" == "info" ] && [ "$VERBOSE" == "ON" ] ;
     then
         if [ "$DAEMON" == "ON" ] ; then
             # function without option must be print on stdout in anycase 
@@ -87,7 +88,7 @@ print() {
             then
                 echo "$EXEC_CMD $log_level: $*"
             fi
-            logger -p local0.$log_level -t sqlbackup "$*"
+            logger -p local0."$log_level" -t sqlbackup "$*"
         else
             if [ -z "$log_level" ];
             then
@@ -101,14 +102,14 @@ print() {
 }
 
 error() {
-    print "error" $*
+    print "error" "$@"
 }
 
 info() {
-    print "info" $*
+    print "info" "$@"
 }
 debug() {
-    print "debug" $*
+    print "debug" "$@"
 }
 
 function dobck() {
@@ -121,7 +122,7 @@ function dobck() {
     old_ifs="$IFS"
     IFS="	"
     # read parameter given by mysql
-    while read login pass db count compressed target_dir; do
+    while read -r login db count compressed target_dir; do
         
         debug "read $login \$pass $db $count $compressed $target_dir"
         # restore $IFS after read parameter
@@ -150,14 +151,14 @@ function dobck() {
         # ------------------------------------------------------------------ #
         # the variable SQLBACKUP_TYPE must be set in /etc/alternc/local.sh #
         # ------------------------------------------------------------------ #
-        if [ $SQLBACKUP_TYPE == "rotate" ]; then 
+        if [ "$SQLBACKUP_TYPE" == "rotate" ]; then 
             
             i="$count"
             
             # rotate all backup
-            while [ $i -gt 1 ] ; do
+            while [ "$i" -gt 1 ] ; do
               
-              next_i=$(($i - 1))
+              next_i=$((i - 1))
             
               if [ -e "${target_dir}/${db}.sql.${next_i}${ext}" ]; then
                 mv -f "${target_dir}/${db}.sql.${next_i}${ext}" \
@@ -183,7 +184,7 @@ function dobck() {
             # weekly : if we are keeping X backup, deleting the file which has the mtime at (X + 1) * 7 day
             # echo "last2del=( $count + 1 ) * $coef "
             #
-            last2del=$(( ( $count + 1 ) * $coef ))
+            last2del=$(( ( count + 1 ) * coef ))
            
             # find the oldest backup file need to be delete
             # find ${target_dir}     : in the target_dir
@@ -195,7 +196,7 @@ function dobck() {
             # -exec rm -f {} \;      : remove all files found
             # 
             debug "find ${target_dir} -name \"${db}.*sql${ext}\" -maxdepth 1 -mtime +$last2del -exec rm -f {} \; -ls"
-            find ${target_dir} -name "${db}.*sql${ext}" -maxdepth 1 -mtime +${last2del} -exec rm -f {} \; -ls || true
+            find "${target_dir}" -name "${db}.*sql${ext}" -maxdepth 1 -mtime +${last2del} -exec rm -f {} \; -ls || true
             
             # set the name of the backup file with the date of the day
             name_backup_file="${db}.${DATE}"
@@ -311,18 +312,18 @@ read_parameters() {
         exit
     fi
 
-    if ! ( [ -z "$SQLBACKUP_TYPE" ] || 
+    if ! { [ -z "$SQLBACKUP_TYPE" ] || 
            [ "$SQLBACKUP_TYPE" == "date" ] || 
-           [ "$SQLBACKUP_TYPE" == "rotate" ] ) ; then
+           [ "$SQLBACKUP_TYPE" == "rotate" ] ;} ; then
         error "invalid argument: name-methode -- $SQLBACKUP_TYPE"
         error "Try \`sqlbackup.sh --help' for more information."
         exit
      fi
 
-    if ! ( [ -z  "$SQLBACKUP_OVERWRITE" ] || 
+    if ! { [ -z  "$SQLBACKUP_OVERWRITE" ] || 
            [ "$SQLBACKUP_OVERWRITE" == "no" ] || 
            [ "$SQLBACKUP_OVERWRITE" == "rename" ] || 
-           [ "$SQLBACKUP_OVERWRITE" == "overwrite" ] ); then
+           [ "$SQLBACKUP_OVERWRITE" == "overwrite" ] ;}; then
         error "invalid argument: allow-ovewrite -- $SQLBACKUP_OVERWRITE"
         error "Try \`sqlbackup.sh --help' for more information."
         exit
@@ -367,8 +368,9 @@ Here are the values:
                     backup"
 
 }
-debug begin $@
+debug begin "$@"
 # read all paramter before doing anything before
+# shellcheck disable=SC2068
 read_parameters $@
 debug end
 
@@ -388,7 +390,7 @@ debug end
 #
 debug /usr/bin/mysql --defaults-file=/etc/alternc/my.cnf --batch
 /usr/bin/mysql --defaults-file=/etc/alternc/my.cnf --batch << EOF | tail -n '+2' | dobck
-SELECT login, pass, db, bck_history, bck_gzip, bck_dir
+SELECT login, db, bck_history, bck_gzip, bck_dir
   FROM db
  WHERE bck_mode=$mode;
 EOF

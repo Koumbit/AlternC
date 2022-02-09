@@ -27,7 +27,7 @@
 
 show_help() {
 cat << EOT
-Usage: `basename $0` [-c] [-n] [-l <login>] [-u <uid>] [-p <directory>] [-d <domain>]
+Usage: $(basename "$0") [-c] [-n] [-l <login>] [-u <uid>] [-p <directory>] [-d <domain>]
 
 Fixes rights of AlternC mailboxes
 
@@ -61,12 +61,14 @@ ACL=0
 
 execute_cmd() {
 	if [ $DRY_RUN -eq 1 ]; then
-		echo $@
+		echo "$@"
 	else
-		eval $@
+        # shellcheck disable=SC2068
+		$@
 	fi
 }
 
+# shellcheck disable=SC2089
 query="select m.path, mem.uid from mailbox m join address a on m.address_id=a.id join domaines d on a.domain_id=d.id join membres mem on d.compte=mem.uid where delivery='dovecot'"
 
 while getopts "hl:u:p:d:cn" optname
@@ -137,18 +139,18 @@ do
 done
 
 
-echo $query | mysql --defaults-file=/etc/alternc/my.cnf -N -B | while read path uid; do
+echo "$query" | mysql --defaults-file=/etc/alternc/my.cnf -N -B | while read -r path uid; do
 	echo "** Fixing $path ($uid)"
 
 	if [ $ACL -eq 1 ]; then
-		execute_cmd chown -R www-data.$uid $path
-		execute_cmd find $path -type d -exec chmod 2755 {} \\\;
-		execute_cmd setfacl -bknR -m d:u:$uid:rwx -m u:$uid:rwx -m d:o::--- -m o::---\
-                    -m d:u:www-data:rwx -m u:www-data:rwx -m d:g:$uid:rwx -m g:$uid:rwx\
+		execute_cmd chown -R www-data."$uid" "$path"
+		execute_cmd find "$path" -type d -exec chmod 2755 {} \\\;
+		execute_cmd setfacl -bknR -m d:u:"$uid":rwx -m u:"$uid":rwx -m d:o::--- -m o::---\
+                    -m d:u:www-data:rwx -m u:www-data:rwx -m d:g:"$uid":rwx -m g:"$uid":rwx\
 		    -m d:mask:rwx -m mask:rwx "$path"
         else 
-		execute_cmd chown -R $uid.vmail $path
-		execute_cmd find $path -type d -exec chmod 0700 {} \\\;
+		execute_cmd chown -R "$uid".vmail "$path"
+		execute_cmd find "$path" -type d -exec chmod 0700 {} \\\;
         fi
 
 done

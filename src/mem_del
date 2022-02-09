@@ -20,6 +20,7 @@ if [[ ! "$(id -u)" == "0" ]] ; then
 fi
 
 # Get the vars and some functions
+# shellcheck disable=SC1091
 source /usr/lib/alternc/functions.sh
 target="$(get_html_path_by_name "$name")"
 

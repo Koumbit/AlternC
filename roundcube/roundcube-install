@@ -27,13 +27,14 @@ then
     echo "Installing Roundcube Templates ..."
 
     LOGIN="0000_roundcube"
-    PASSWORD="`perl -e 'print map{("a".."z","A".."Z",0..9)[int(rand(62))]}(1..10)'`"
-    DESKEY="`perl -e 'print map{("a".."z","A".."Z",0..9)[int(rand(62))]}(1..24)'`"
+    PASSWORD="$(perl -e 'print map{("a".."z","A".."Z",0..9)[int(rand(62))]}(1..10)')"
+    DESKEY="$(perl -e 'print map{("a".."z","A".."Z",0..9)[int(rand(62))]}(1..24)')"
     # "
     # Add new variables to the sed script ...
     SED_SCRIPT="/tmp/alternc-roundcube.sedscript"
     # cf alternc.install for more explanations on this horror : 
-    eval `sed -n -e "/=/{s/ *= *\"\?/='/;s/\"\?\$/'/;s/host/MYSQL_HOST/;s/user/MYSQL_USER/;s/password/MYSQL_PASS/;s/database/MYSQL_DATABASE/;p}" /etc/alternc/my.cnf`
+    eval "$(sed -n -e "/=/{s/ *= *\"\?/='/;s/\"\?\$/'/;s/host/MYSQL_HOST/;s/user/MYSQL_USER/;s/password/MYSQL_PASS/;s/database/MYSQL_DATABASE/;p}" /etc/alternc/my.cnf)"
+    # shellcheck disable=SC1091
     . /etc/alternc/local.sh
     # Configuration template location
     TEMPLATE_DIR="/etc/alternc/templates"
@@ -51,7 +52,7 @@ EOF
 	TEMPLATE="$TEMPLATE_DIR/${file##etc/}"
 	echo -n " $file"
 	if [ -f "$TEMPLATE" ]; then
-            sed -f "$SED_SCRIPT" < $TEMPLATE > /$file
+            sed -f "$SED_SCRIPT" < "$TEMPLATE" > /"$file"
 	fi
     done
 
@@ -59,10 +60,12 @@ EOF
 
     echo "    Done"
 
+    # shellcheck disable=SC1091
     . /usr/lib/alternc/functions.sh
 
     echo "giving write access to roundcube to the email password ..."
-    # now database host user and password are mysql root account values ;) 
+    # now database host user and password are mysql root account values ;)
+    # shellcheck disable=SC2154
     mysql_query "GRANT UPDATE (password) ON ${database}.address TO '${LOGIN}'@'${MYSQL_CLIENT}' IDENTIFIED BY '${PASSWORD}';"
     mysql_query "GRANT SELECT ON ${database}.address TO '${LOGIN}'@'${MYSQL_CLIENT}';"
     mysql_query "GRANT SELECT ON ${database}.domaines TO '${LOGIN}'@'${MYSQL_CLIENT}';"

@@ -4,21 +4,20 @@ DF=/bin/df
 SED=/bin/sed
 MOUNT=/bin/mount
 QUOTA=/usr/bin/quota
-GREP=/bin/grep
-WC=/usr/bin/wc
 BLKID=/sbin/blkid
 MID=$1
 
+# shellcheck disable=SC1091
 source /etc/alternc/local.sh
 
-if [ "x$MID" == "x" ] ; then
+if [ "$MID" == "x" ] ; then
   echo "Usage: quota_get <uid>"
   echo "Get the quota of the AlternC account having uid <uid>"
   exit 1
 fi
 
 QUOTA_OPTIONS="-l"
-if [ "$NFS_QUOTA" = "yes" -o "$NFS_QUOTA" = "YES" -o "$NFS_QUOTA" = "Yes" ]
+if [ "$NFS_QUOTA" = "yes" ] || [ "$NFS_QUOTA" = "YES" ] || [ "$NFS_QUOTA" = "Yes" ]
 then
     QUOTA_OPTIONS=""
 fi
@@ -32,13 +31,14 @@ command -v $QUOTA >/dev/null || { echo "Quotas uninstalled"; exit 0; }
 # the bigger one, and if someone separate it we need to look this one
 # particulary. It should be interesting to cumulate quota of all mounted directory.
 
-DATA_PART=`$DF "${ALTERNC_HTML}" 2>/dev/null | $AWK 'NR==2 { print $1 }'`
+# shellcheck disable=SC2016
+DATA_PART=$($DF "${ALTERNC_HTML}" 2>/dev/null | $AWK 'NR==2 { print $1 }')
 
 # quota will give over NFS will print the partition using the full NFS name
 # (e.g. 10.0.0.1:/var/www/alternc) so we need to lookup first with mount
 # to convert DATA_PART if needed.
 
-QUOTA_PART=`$MOUNT | $SED -n -e "s,\([^ ]*\) on ${DATA_PART} type nfs.*,\1,p"`
+QUOTA_PART=$($MOUNT | $SED -n -e "s,\([^ ]*\) on ${DATA_PART} type nfs.*,\1,p")
 
 if [ -z "$QUOTA_PART" ]; then
     QUOTA_PART="$DATA_PART"
@@ -46,13 +46,11 @@ if [ -z "$QUOTA_PART" ]; then
     UUID=$( $BLKID | grep "$QUOTA_PART" | cut -f2 -s -d" " | sed 's/\(UUID="\)\(.*\)\(\"$\)/\2/')
 fi
 
-quot=$(sudo quota $QUOTA_OPTIONS -wvg "$MID" | grep "$QUOTA_PART" | $AWK 'NR==1 {print $1;}' )
-
 # Now we get the quota 
 #first by testing if the partition is referenced by UUID
-val=$(sudo quota $QUOTA_OPTIONS -vwg "$MID" |grep "$UUID" | awk 'END { print $2 "\n" $3; }')
+val=$(sudo quota "$QUOTA_OPTIONS" -vwg "$MID" |grep "$UUID" | awk 'END { print $2 "\n" $3; }')
 if [ -z "$val" ] ; then
-    val=$(sudo quota $QUOTA_OPTIONS -A -wg "$MID" |grep "$QUOTA_PART" | awk 'END { print $2 "\n" $3; }')
+    val=$(sudo quota "$QUOTA_OPTIONS" -A -wg "$MID" |grep "$QUOTA_PART" | awk 'END { print $2 "\n" $3; }')
 
     # If the quota aren't activated, I return something anyway
     if [ -z "$val" ] ; then

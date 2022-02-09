@@ -10,6 +10,7 @@ for CONFIG_FILE in \
         echo "Can't access $CONFIG_FILE."
         exit 1
     fi
+    # shellcheck disable=SC1090
     . "$CONFIG_FILE"
 done
 
@@ -20,11 +21,11 @@ LOCK_FILE="/run/alternc/update_mails"
 # ALTERNC_MAIL is from local.sh
 
 # Somes check before start operations
-if [ `id -u` -ne 0 ]; then
+if [ "$(id -u)" -ne 0 ]; then
     log_error "must be launched as root"
 elif [ -f "$LOCK_FILE" ]; then
-    process=$(ps f -p `cat "$LOCK_FILE"|tail -1`|tail -1|awk '{print $NF;}')
-    if [ "$(basename $process)" = "$(basename "$0")" ] ; then
+    process=$(ps f -p "$(tail -1 "$LOCK_FILE")"|tail -1|awk '{print $NF;}')
+    if [ "$(basename "$process")" = "$(basename "$0")" ] ; then
       log_error "last cron unfinished or stale lock file ($LOCK_FILE)."
     else
       rm "$LOCK_FILE"
@@ -41,10 +42,11 @@ echo $$ > "$LOCK_FILE"
 # List the local addresses to DELETE
 # Foreach => Mark for deleting and start deleting the files
 # If process is interrupted, the row isn't deleted. We have to force it by reseting mail_action to 'DELETE'
-mysql_query "SELECT id, address_id, quote(replace(path,'!','\\!')) FROM mailbox WHERE mail_action='DELETE';"|while read id address_id path ; do
+mysql_query "SELECT id, address_id, quote(replace(path,'!','\\!')) FROM mailbox WHERE mail_action='DELETE';"|while read -r id address_id path ; do
   mysql_query "UPDATE mailbox set mail_action='DELETING' WHERE id=$id;"
   /usr/lib/alternc/mail_dodelete.php "$address_id"
   # Check there is no instruction of changing directory, and check the first part of the string
+  # shellcheck disable=SC2076
   if [[ "$path" =~ '../' || "$path" =~ '/..' || ! "'$ALTERNC_MAIL'" == "${path:0:$((${#ALTERNC_MAIL}+1))}'" ]] ; then
     # The path will be empty for mailman addresses
     if [[ "$path" != "''" ]]; then

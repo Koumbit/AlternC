@@ -23,15 +23,16 @@
 # ----------------------------------------------------------------------
 
 # Init some vars
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 
 # Init some other vars
-MYSQL_DO="/usr/bin/mysql --defaults-file=/etc/alternc/my.cnf -Bs -e "
+#MYSQL_DO="/usr/bin/mysql --defaults-file=/etc/alternc/my.cnf -Bs -e "
 mysql_query() { /usr/bin/mysql --defaults-file=/etc/alternc/my.cnf -Bs -e "$@" ; }
 DOMAIN_LOG_FILE="/var/log/alternc/update_domains.log"
-VHOST_FILE="$VHOST_DIR/vhosts_all.conf" 
-VHOST_MANUALCONF="$VHOST_DIR/manual/"
+#VHOST_FILE="$VHOST_DIR/vhosts_all.conf" 
+#VHOST_MANUALCONF="$VHOST_DIR/manual/"
 LOCK_JOBS="/run/alternc/jobs-lock"
 
 
@@ -43,7 +44,7 @@ print_domain_letter() {
   domain=${domain:0:1}
   # Bash match a 'é' when we give him [a-z]. Strange
   if [[ "$domain" =~ [ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0-9]{1} ]]; then
-    echo $domain
+    echo "$domain"
   else
     echo '_'
   fi 
@@ -51,17 +52,16 @@ print_domain_letter() {
 
 get_uid_by_path() {
   local path="$1"
-  local sizepath=${#path}
-  local lastcar=${ALTERNC_HTML: -1}
 
   local sizebasepath=${#ALTERNC_HTML}
   if [ "${ALTERNC_HTML:-1}" != "/" ] ; then
-    sizebasepath=$(( $sizebasepath + 1 ))
+    sizebasepath=$(( sizebasepath + 1 ))
   fi
 
-  local login=$(echo ${path:$sizebasepath} | cut -d '/' -f 2)
+  local login=''
+  login=$(echo "${path:$sizebasepath}" | cut -d '/' -f 2)
 
-  get_uid_by_name $login
+  get_uid_by_name "$login"
 }
 
 # Return the html path for a account name
@@ -78,7 +78,7 @@ get_html_path_by_name() {
 # echoes the first letter of an alternc account name.
 print_user_letter() {
     local user="$1"
-    echo ${user:0:1}
+    echo "${user:0:1}"
 }
 
 
@@ -121,8 +121,7 @@ get_uid_by_domain() {
 
 # Log (echoes+log) an error and exit the current script with an error.
 log_error() {
-  local error=$1
-  echo "`date` $0 : $1" | tee -a "$DOMAIN_LOG_FILE" >&2
+  echo "$(date) $0 : $1" | tee -a "$DOMAIN_LOG_FILE" >&2
   exit 1
 }
 
@@ -131,7 +130,7 @@ generate_string() {
   if [ -z "$size" ] ; then
     size=20
   fi
-  < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-$size}
+  < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c"${1:-$size}"
   echo
 }
 
@@ -145,7 +144,7 @@ unlock_jobs() {
 }
 
 are_jobs_locked() {
-  return $(test -e "$LOCK_JOBS")
+  return "$(test -e "$LOCK_JOBS")"
 }
 
 stop_if_jobs_locked() {
