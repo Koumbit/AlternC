@@ -6,6 +6,7 @@ then
     exit 0
 else
     # Source debconf library.
+    # shellcheck disable=SC1091
     . /usr/share/debconf/confmodule
     db_version 2.0
     db_title AlternC-Awstats

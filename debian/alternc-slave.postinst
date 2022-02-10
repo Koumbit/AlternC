@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 # Source debconf library.
+# shellcheck disable=SC1091
 . /usr/share/debconf/confmodule
 
 CONFIGFILE="/etc/alternc/local.sh"
@@ -13,7 +14,7 @@ update_var() {
     question="$1"
     var="$2"
     db_get "$question"
-    if [ ! -z "$RET" ]; then
+    if [ -n "$RET" ]; then
         grep -Eq "^ *$var=" $CONFIGFILE || echo "$var=" >> $CONFIGFILE
         SED_SCRIPT="$SED_SCRIPT;s\\^ *$var=.*\\$var=\"$RET\"\\"
     fi
@@ -136,6 +137,7 @@ EOF
 
     if [ -e $CONFIGFILE ]; then
       # source local.sh variables
+      # shellcheck disable=SC1090
       . $CONFIGFILE
     fi
 
@@ -146,17 +148,17 @@ EOF
         usermod --uid 342 --shell /bin/rbash --login alternc alternc-mergelog
         # this is a separate step otherwise usermod will look for
         # files to chown in /var/alternc, which takes a long time
-        usermod --home $ALTERNC_LOC alternc
+        usermod --home "$ALTERNC_LOC" alternc
     fi
     if [ -d /var/run/alternc-mergelog/.ssh ]; then
         echo "Cleaning up old alternc-mergelog home"
-        mv /var/run/alternc-mergelog/.ssh $ALTERNC_LOC/.ssh && rmdir /var/run/alternc-mergelog
+        mv /var/run/alternc-mergelog/.ssh "$ALTERNC_LOC/.ssh" && rmdir /var/run/alternc-mergelog
     fi
     if ! grep -q alternc /etc/passwd ; then
         echo "Creating alternc account"
         # this uid is ugly. we should request allocation from
         # base-password instead
-        adduser --quiet --system --uid 342 --home $ALTERNC_LOC --shell /bin/rbash --ingroup adm alternc
+        adduser --quiet --system --uid 342 --home "$ALTERNC_LOC" --shell /bin/rbash --ingroup adm alternc
     fi
 
     echo "config phpmyadmin"

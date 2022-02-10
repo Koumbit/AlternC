@@ -110,13 +110,13 @@ get_variable_from_db() {
 
 # imprime le nom d'usager associé au domaine
 get_account_by_domain() {
-        mysql_query 'SELECT a.login FROM membres a, sub_domaines b WHERE a.uid = b.compte AND \
-        CONCAT(IF(sub="", "", CONCAT(sub, ".")), domaine) = "'"$1"'" LIMIT 1;'
+        mysql_query 'SELECT a.login FROM membres a, sub_domaines b WHERE a.uid = b.compte AND' \
+        ' CONCAT(IF(sub="", "", CONCAT(sub, ".")), domaine) = "'"$1"'" LIMIT 1;'
 }
 
 get_uid_by_domain() {
-        mysql_query 'SELECT b.compte as uid FROM sub_domaines b WHERE \
-        CONCAT(IF(sub="", "", CONCAT(sub, ".")), domaine) = "'"$1"'" LIMIT 1;'
+        mysql_query 'SELECT b.compte as uid FROM sub_domaines b WHERE' \
+        ' CONCAT(IF(sub="", "", CONCAT(sub, ".")), domaine) = "'"$1"'" LIMIT 1;'
 }
 
 # Log (echoes+log) an error and exit the current script with an error.

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 # Add INOTIFY_UPDATE_DOMAIN var to local.sh

@@ -3,10 +3,8 @@
 set -e
 
 # Source debconf library.
+# shellcheck disable=SC1091
 . /usr/share/debconf/confmodule
-
-CONFIGFILE="/etc/alternc/local.sh"
-LOGROTATE="/etc/logrotate.d/roundcube-core"
 
 case "$1" in
     configure)

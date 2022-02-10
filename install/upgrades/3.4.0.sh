@@ -3,7 +3,8 @@
 # this script is for 3.1.2 or 3.2.2
 # we named it 3.4.0.sh since some of us had a 3.3.0~a.sql installed at some point in time
 # which means the alternc_status table have this number in mind.
-# so we need to have a bigger one 
+# so we need to have a bigger one
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 echo "Fix OpenDKIM key generation"

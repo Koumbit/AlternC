@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 # Source debconf library.
+# shellcheck disable=SC1091
 . /usr/share/debconf/confmodule
 
 CONFIGFILE="/etc/alternc/local.sh"
@@ -187,26 +188,34 @@ NFS_QUOTA=no" >> $CONFIGFILE
     # Setup grants
     db_get "alternc/mysql/host"
     MYSQL_HOST="$RET"
-    if [ "$MYSQL_HOST" != "localhost" -o -e /usr/sbin/mysqld ]; then
+    if [ "$MYSQL_HOST" != "localhost" ] || [ -e /usr/sbin/mysqld ]; then
         # compatibility shims with my.cnf
+        # shellcheck disable=SC2034
         host="$RET"
         db_get "alternc/mysql/db"
+        # shellcheck disable=SC2034
         database="$RET"
         db_get "alternc/mysql/user"
+        # shellcheck disable=SC2034
         user="$RET"
         db_get "alternc/mysql/password"
+        # shellcheck disable=SC2034
         password="$RET"
         db_get "alternc/mysql/alternc_mail_user"
+        # shellcheck disable=SC2034
         alternc_mail_user="$RET"
         db_get "alternc/mysql/alternc_mail_password"
+        # shellcheck disable=SC2034
         alternc_mail_password="$RET"
 
         # we source (instead of forking) mysql.sh so that it gets the local environment above
+        # shellcheck disable=SC1091
         . /usr/share/alternc/install/mysql.sh
     fi
 
     if [ -e $CONFIGFILE ]; then
       # source local.sh variables
+      # shellcheck disable=SC1090
       . $CONFIGFILE
     fi
 
@@ -214,20 +223,20 @@ NFS_QUOTA=no" >> $CONFIGFILE
     # authorized keys. since this is the master, we do not give him a
     # valid shell, but we still need the user for proper perms
     ALTERNC_USER_HOME="$ALTERNC_HTML"
-    if [ ! -z "$ALTERNC_SLAVES" ] && [ "$ALTERNC_SLAVES" != "localhost" ] ; then
+    if [ -n "$ALTERNC_SLAVES" ] && [ "$ALTERNC_SLAVES" != "localhost" ] ; then
         if ! grep -q alternc /etc/passwd ; then
             echo "Creating alternc account"
-            adduser --quiet --system --uid 342 --home $ALTERNC_HTML --shell /bin/false --ingroup adm alternc
+            adduser --quiet --system --uid 342 --home "$ALTERNC_HTML" --shell /bin/false --ingroup adm alternc
         fi
         chown alternc "$ALTERNC_USER_HOME"
         if [ -r ~root/.ssh/id_dsa.pub ]; then
-            key=`cat ~root/.ssh/id_dsa.pub`
-            if ! grep -q "$key" $ALTERNC_USER_HOME/.ssh/authorized_keys ; then
+            key=$(cat ~root/.ssh/id_dsa.pub)
+            if ! grep -q "$key" "$ALTERNC_USER_HOME"/.ssh/authorized_keys ; then
                 echo "Authorizing root ssh key to access the common alternc account"
-                mkdir -p $ALTERNC_USER_HOME/.ssh
-                echo "$key" >> $ALTERNC_USER_HOME/.ssh/authorized_keys
-                chown -R alternc:adm $ALTERNC_USER_HOME/.ssh
-                chmod -R og-rwx $ALTERNC_USER_HOME/.ssh
+                mkdir -p "$ALTERNC_USER_HOME/.ssh"
+                echo "$key" >> "$ALTERNC_USER_HOME/.ssh/authorized_keys"
+                chown -R alternc:adm "$ALTERNC_USER_HOME/.ssh"
+                chmod -R og-rwx "$ALTERNC_USER_HOME/.ssh"
             fi
         else
             echo "No SSH key in "~root/.ssh/id_dsa.pub
@@ -238,7 +247,8 @@ NFS_QUOTA=no" >> $CONFIGFILE
     fi
 
     # /var/alternc/dns/d/www.example.com
-    FQDN_LETTER="`echo $FQDN | sed -e 's/.*\.\([^\.]\)[^\.]*\.[^\.]*$/\1/'`"
+    # shellcheck disable=SC2001
+    FQDN_LETTER="$(echo "$FQDN" | sed -e 's/.*\.\([^\.]\)[^\.]*\.[^\.]*$/\1/')"
     if [ "$FQDN_LETTER" = "$FQDN" ]
     then
            FQDN_LETTER="_"
@@ -265,7 +275,7 @@ NFS_QUOTA=no" >> $CONFIGFILE
         LOCAL_APP_PROFILE="/etc/apparmor.d/local/usr.sbin.named-alternc"
 
         test -e "$LOCAL_APP_PROFILE" || {
-            mkdir -p `dirname "$LOCAL_APP_PROFILE"`
+            mkdir -p "$(dirname "$LOCAL_APP_PROFILE")"
             install --mode 644 /usr/share/alternc/install/apparmor/usr.sbin.named-alternc "$LOCAL_APP_PROFILE"
         }
 

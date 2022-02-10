@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+# shellcheck disable=SC1091
 . /usr/share/debconf/confmodule
 
 # Create AlternC Panel user for web server
@@ -21,15 +22,16 @@ case "$1" in
         echo "Upgrading bind configuration"
         # Move /etc/bind files around
         mkdir -p /var/alternc/bind
-        if [ ! -e /var/alternc/bind/automatic.conf -a \
+        if [ ! -e /var/alternc/bind/automatic.conf ] && [ \
              -f /etc/bind/automatic.conf ]; then
             if [ ! -e /var/alternc/bind/zones ]; then
                 mkdir -p /var/alternc/bind/zones
             fi
-            for zone in `sed -n -e 's,.*/etc/bind/master/\(.*\)".*,\1,p' \
-                             /etc/bind/automatic.conf`; do
-                if [ -f /etc/bind/master/$zone ]; then
-                    mv /etc/bind/master/$zone /var/alternc/bind/zones
+            # shellcheck disable=SC2013
+            for zone in $(sed -n -e 's,.*/etc/bind/master/\(.*\)".*,\1,p' \
+                             /etc/bind/automatic.conf); do
+                if [ -f "/etc/bind/master/$zone" ]; then
+                    mv "/etc/bind/master/$zone" /var/alternc/bind/zones
                 fi
             done
             cp -a -f /etc/bind/automatic.conf /var/alternc/bind/automatic.conf
@@ -37,18 +39,18 @@ case "$1" in
                 < /etc/bind/automatic.conf > /var/alternc/bind/automatic.conf
             rm /etc/bind/automatic.conf
         fi
-        if [ ! -e /var/alternc/bind/slaveip.conf -a \
+        if [ ! -e /var/alternc/bind/slaveip.conf ] && [ \
              -f /etc/bind/slaveip.conf ]; then
             mv /etc/bind/slaveip.conf /var/alternc/bind/slaveip.conf
         fi
         if [ ! -e /etc/bind/templates ]; then
             mkdir -p /etc/bind/templates
         fi
-        if [ ! -e /etc/bind/templates/named.template -a \
+        if [ ! -e /etc/bind/templates/named.template ] && [ \
              -f /etc/bind/domaines.template ]; then
             mv /etc/bind/domaines.template /etc/bind/templates/named.template
         fi
-        if [ ! -e /etc/bind/templates/zone.template -a \
+        if [ ! -e /etc/bind/templates/zone.template ] && [ \
              -f /etc/bind/master/domaines.template ]; then
             mv /etc/bind/master/domaines.template \
                /etc/bind/templates/zone.template

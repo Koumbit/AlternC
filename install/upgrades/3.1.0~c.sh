@@ -11,11 +11,12 @@ if [ ! -r "$CONFIG_FILE" ]; then
     exit 1
 fi
 
-if [ `id -u` -ne 0 ]; then
+if [ "$(id -u)" -ne 0 ]; then
     echo "$0 must be launched as root"
     exit 1
 fi
 
+# shellcheck disable=SC1090
 . "$CONFIG_FILE"
 
 

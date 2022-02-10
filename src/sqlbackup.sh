@@ -215,7 +215,7 @@ function dobck() {
 
            info "sqlbackup.sh: ${target_dir}/${name_backup_file}.sql${ext}: already exist"
            info "              => renaming the new file as specify in allow-overwrite = $SQLBACKUP_OVERWRITE"
-           hours=`date +"%H%M"` 
+           hours=$(date +"%H%M")
            name_backup_file="${name_backup_file}.${hours}"
 
         # if the backup exite and SQLBACKUP_OVERWRITE is set OVERWRITE, add  

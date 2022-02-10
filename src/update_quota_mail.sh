@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 . /usr/lib/alternc/functions.sh
 
 #You can call this script either without arguments, inwich case each maildir quotas will be recalculated
@@ -97,18 +98,18 @@ for i in $maildirs ; do
   fi
 
 	# We grep only mails, not the others files
-	mails=`find $i -type f | egrep "(^$i)*[0-9]+\.M"`
+	mails=$(find "$i" -type f | grep -E "(^$i)*[0-9]+\.M")
 
 	# This part count the total mailbox size (mails + sieve scripts + ...)
-	size=`du -b -s $i|awk '{print $1}'` 
+	size=$(du -b -s "$i" | awk '{print $1}')
 
-	mail_count=`echo $mails|wc -w` 
-	echo "folder : "$i
-	echo "mail count : "$mail_count
-	echo "dir size : "$size
+	mail_count=$(echo "$mails"|wc -w)
+	echo "folder : $i"
+	echo "mail count : $mail_count"
+	echo "dir size : $size"
 	echo ""
 	#update the mailbox table accordingly
-	MAILADD=`basename $i`
+	MAILADD=$(basename "$i")
 	MAILADD=${MAILADD/_/@}
 	mysql_query "REPLACE INTO dovecot_quota VALUES('$MAILADD', $size, $mail_count);"
 done

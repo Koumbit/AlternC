@@ -9,25 +9,26 @@
 
 # remove version from filename by stripping the extension
 strip_ext() {
-	echo $1 | sed -e 's/\.[^.]*$//' -e 's/[a-z_]*$//'
+	echo "$1" | sed -e 's/\.[^.]*$//' -e 's/[a-z_]*$//'
 }
 
 # find the version from a filename by stripping everything but the extension
 get_ext() {
-	echo $1 | sed 's/^.*\.\([^.]*\)$/\1/'
+    # shellcheck disable=SC2001
+	echo "$1" | sed 's/^.*\.\([^.]*\)$/\1/'
 }
 
 
 # Reading the current version in the DB.
 # If the DB exist but the alternc_status table doesn't, we will initialize it below
 # In that case we search where we upgrade from in /var/lib/alternc/backups/lastversion from debian.postinstall script
-oldvers="`mysql --defaults-file=/etc/alternc/my.cnf --skip-column-names -e "SELECT value FROM alternc_status WHERE name='alternc_version'" 2>/dev/null||true`"
+oldvers="$(mysql --defaults-file=/etc/alternc/my.cnf --skip-column-names -e "SELECT value FROM alternc_status WHERE name='alternc_version'" 2>/dev/null||true)"
 if [ -z "$oldvers" ]
 then
     # no version number, we check from /var/lib/alternc
     if [ -f "/var/lib/alternc/backups/lastversion" ]
     then
-	oldvers="`cat /var/lib/alternc/backups/lastversion`"
+	oldvers="$(cat /var/lib/alternc/backups/lastversion)"
 	# this is a *version number*, not a *last upgrade script* we have this *border case*
 	if [ "$oldvers" = "3.1" ]
 	then
@@ -51,17 +52,19 @@ fi
 mysql --defaults-file=/etc/alternc/my.cnf -e "CREATE TABLE IF NOT EXISTS alternc_status (name VARCHAR(48) NOT NULL DEFAULT '',value LONGTEXT NOT NULL,PRIMARY KEY (name),KEY name (name) ) ENGINE=MyISAM DEFAULT CHARSET=latin1;"
 mysql --defaults-file=/etc/alternc/my.cnf -e "INSERT IGNORE INTO alternc_status SET name='alternc_version',value='$oldvers';"
 
+# shellcheck disable=SC1091
 . /etc/alternc/local.sh
 
 # the upgrade script we are considering
 extensions="*.sql *.sh *.php"
-cd /usr/share/alternc/install/upgrades
+cd /usr/share/alternc/install/upgrades || exit 1
+# shellcheck disable=SC2012,SC2086
 for file in $( ls $extensions | sort -n ) ; do
-	if [ -r $file ]; then
+	if [ -r "$file" ]; then
                 # the version in the filename
-		upvers=`strip_ext $file`
+		upvers=$(strip_ext $file)
                 # the extension
-		ext=`get_ext $file`
+		ext=$(get_ext $file)
 		if dpkg --compare-versions "$upvers" gt "$oldvers"; then
 		  echo "Running upgrade script $file"
                   # run the proper program to interpret the upgrade script

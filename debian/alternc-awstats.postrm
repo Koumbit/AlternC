@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-MENUFILE="/etc/alternc/menulist.txt"
-
 case "$1" in
   remove)
     # Remove Awstats references from Apache configuration
@@ -12,7 +10,8 @@ case "$1" in
     ;;
   purge)
     #/usr/lib/alternc/quota_delete aws
-    if [ -e "$CONFIGFILE" -a -x "/usr/bin/mysql" ]; then
+      if [ -e "$CONFIGFILE" ] && [ -x "/usr/bin/mysql" ]; then
+        # shellcheck disable=SC1090
         . "$CONFIGFILE"
         mysql -f --defaults-file=/etc/alternc/my.cnf \
               -e "DROP TABLE IF EXISTS aws,aws_users,aws_access;"
