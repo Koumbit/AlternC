@@ -86,6 +86,11 @@ pipeline {
                     }
                     stage('build test images') {
                         steps {
+                            when {
+                                expression {
+                                    return $DISTRIBUTION == 'bullseye'
+                                }
+                            }
                             script {
                                 containerfile = "tests/containers/${DISTRIBUTION}"
                                 if (env.NODE_LABELS ==~ /.*PODMAN_SUDO.*/) {
