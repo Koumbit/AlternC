@@ -100,7 +100,7 @@ pipeline {
                     stage('shellcheck') {
                         when {
                             expression {
-                                return $DISTRIBUTION == 'bullseye'
+                                return DISTRIBUTION == 'bullseye'
                             }
                         }
                         steps {
@@ -169,6 +169,7 @@ pipeline {
         }
     }
     post {
+        agent any
         always {
             cleanWs()
         }
