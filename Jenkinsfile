@@ -86,11 +86,6 @@ pipeline {
                     }
                     stage('build test images') {
                         steps {
-                            when {
-                                expression {
-                                    return $DISTRIBUTION == 'bullseye'
-                                }
-                            }
                             script {
                                 containerfile = "tests/containers/${DISTRIBUTION}"
                                 if (env.NODE_LABELS ==~ /.*PODMAN_SUDO.*/) {
@@ -104,6 +99,11 @@ pipeline {
                     }
                     stage('shellcheck') {
                         steps {
+                            when {
+                                expression {
+                                    return $DISTRIBUTION == 'bullseye'
+                                }
+                            }
                             // Don't block at this time
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                                 sh "${podman} ${image} tests/shellcheck.sh > shellcheck.xml"
