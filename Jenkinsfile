@@ -104,7 +104,6 @@ pipeline {
                                 sh "${podman} ${image} tests/shellcheck.sh > shellcheck.xml"
                             }
                             sh 'cat shellcheck.xml'
-                            junit '**/shellcheck.xml'
                         }
                     }
                     stage('phpcs') {
@@ -114,7 +113,6 @@ pipeline {
                                 sh "${podman} ${image} phpcs --report=checkstyle /target > phpcs.xml"
                             }
                             sh 'cat phpcs.xml'
-                            junit 'phpcs.xml'
                         }
                     }
                     stage('phpunit') {
@@ -129,9 +127,7 @@ pipeline {
                                 }
                             }
                             sh 'cat report/phpunit.xml'
-                            junit 'report/phpunit.xml'
                             sh 'cat report/clover.xml'
-                            junit 'report/clover.xml'
                         }
                     }
                     stage('install from package') {
