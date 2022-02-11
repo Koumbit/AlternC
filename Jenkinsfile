@@ -98,6 +98,11 @@ pipeline {
                         }
                     }
                     stage('shellcheck') {
+                        when {
+                            expression {
+                                return $DISTRIBUTION == 'bullseye'
+                            }
+                        }
                         steps {
                             // Don't block at this time
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
