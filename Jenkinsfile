@@ -104,8 +104,7 @@ pipeline {
                                 sh "${podman} ${image} tests/shellcheck.sh > shellcheck.xml"
                             }
                             sh 'cat shellcheck.xml'
-                            // This fails if the file isn't produced for some reason.
-                            junit 'shellcheck.xml'
+                            junit '**/shellcheck.xml'
                         }
                     }
                     stage('phpcs') {
