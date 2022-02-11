@@ -57,8 +57,8 @@ pipeline {
                 axes {
                     axis {
                         name 'DISTRIBUTION'
-                        values 'stretch', 'buster', 'bullseye', 'bookworm', 'unstable'
-                        // We expect 'bullseye', 'bookworm', and 'unstable' to fail at this
+                        values 'stretch', 'buster', 'bullseye', 'bookworm', 'sid'
+                        // We expect 'bullseye', 'bookworm', and 'sid' to fail at this
                         // point. How do we communicate that to jenkins?
                     }
                 }
@@ -99,11 +99,6 @@ pipeline {
                     }
                     stage('shellcheck') {
                         steps {
-                            when {
-                                expression {
-                                    return $DISTRIBUTION == 'bullseye'
-                                }
-                            }
                             // Don't block at this time
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                                 sh "${podman} ${image} tests/shellcheck.sh > shellcheck.xml"
