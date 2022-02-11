@@ -167,11 +167,11 @@ pipeline {
                 sh "exit 0"
             }
         }
-    }
-    post {
-        agent any
-        always {
-            cleanWs()
+        stage('cleanup') {
+            agent any
+            steps {
+                cleanWs()
+            }
         }
     }
 }
