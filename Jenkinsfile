@@ -115,9 +115,12 @@ pipeline {
                         // Don't block at this time
                         steps {
                             catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                                sh "${podman} ${image} phpcs --report=checkstyle /target > phpcs.xml"
+                                // phpcs.xml is a configuration file, if it exists and is not
+                                // valid, phpcs will fail. Therefore we dump the results in
+                                // phpcs-results.xml
+                                sh "${podman} ${image} phpcs --report=checkstyle /target > phpcs-results.xml"
                             }
-                            sh 'cat phpcs.xml'
+                            sh 'cat phpcs-results.xml'
                         }
                     }
                     stage('phpunit') {
