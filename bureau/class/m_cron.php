@@ -240,9 +240,10 @@ class m_cron {
             if (empty($urllist)) { // nothing to do : 
                 exit(0);
             }
+
+            // cron_callback($url, $content, $curlobj) will be called at the end of each http call.
+            $this->rolling_curl($urllist, array("m_cron", "cron_callback"));
         }
-        // cron_callback($url, $content, $curlobj) will be called at the end of each http call.
-        $this->rolling_curl($urllist, array("m_cron", "cron_callback"));
     }
 
 

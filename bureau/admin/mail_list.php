@@ -154,9 +154,9 @@ if(!empty($mails_list)) {
 	<?php if ($val["type"]) { ?>
 	<td colspan="3"><?php echo $val["typedata"]; ?></td>
 	<?php } else { ?>
-	<td class="<?php echo $grey; ?>"><?php if ($val["islocal"]) echo format_size($val["used"]).( ($val["quotabytes"]==0)?'':"/".format_size($val["quotabytes"])) ; else __("No"); ?></td>
-	<td class="<?php echo $grey; ?>"><?php echo $val["recipients"]; /* TODO : if >60chars, use "..." + js close/open */ ?></td>
-  <td class="<?php echo $grey; ?>"><?php if ($val["islocal"]) { 
+	<td class="<?php echo $grey; ?>"><?php if ($val["islocal"]==1) echo format_size($val["used"]).( ($val["quotabytes"]==0)?'':"/".format_size($val["quotabytes"])) ; else __("No"); ?></td>
+	<td class="<?php echo $grey; ?>"><?php if ((($custom_delivery = variable_get("custom_delivery", "", "None by default")) != "") && $val["islocal"] ==2) { echo $custom_delivery; } else { echo $val["recipients"]; }  /* TODO : if >60chars, use "..." + js close/open */ ?></td>
+  <td class="<?php echo $grey; ?>"><?php if ($val["islocal"]==1) {
 if (date("Y-m-d")==substr($val["lastlogin"],0,10)) echo substr($val["lastlogin"],11,5); else if (substr($val["lastlogin"],0,10)=="0000-00-00") __("Never"); else echo format_date(_('%3$d-%2$d-%1$d'),$val["lastlogin"]);
 } ?></td>
 	<?php } ?>

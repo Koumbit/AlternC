@@ -319,7 +319,7 @@ class m_mysql {
         }
 
         // Ok, database exists and dbname is compliant. Let's proceed
-        $db->query("DELETE FROM size_db WHERE db= ?;", array($dbname));
+        $db->query("DELETE FROM size_db WHERE db ?;", array($dbname));
         $db->query("DELETE FROM db WHERE uid= ? AND db= ? ;", array($cuid, $dbname));
         $this->dbus->query("DROP DATABASE $dbname;");
 
@@ -952,7 +952,7 @@ class m_mysql {
         global $db, $msg, $cuid, $mem;
         $msg->log("mysql", "alternc_add_member");
         // checking for the phpmyadmin user
-        $db->query("SELECT name,password FROM dbusers WHERE uid= ? AND enable='ADMIN';", array($cuid));
+        $db->query("SELECT name,password FROM dbusers WHERE uid= ? AND Type='ADMIN';", array($cuid));
         if ($db->num_rows()) {
             $myadm = $db->f("name");
             $password = $db->f("password");

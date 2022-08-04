@@ -318,17 +318,24 @@ ORDER BY
         } else {
             $limit = "";
         }
-        $db->query("SELECT a.id, a.address, a.password, a.`enabled`, a.mail_action, d.domaine AS domain, m.quota, m.quota*1024*1024 AS quotabytes, q.quota_dovecot as used, NOT ISNULL(m.id) AS islocal, a.type, r.recipients, m.lastlogin, a.domain_id
+        $db->query("SELECT a.id, a.address, a.password, a.`enabled`, a.mail_action, d.domaine AS domain, m.quota, m.quota*1024*1024 AS quotabytes, q.quota_dovecot as used, NOT ISNULL(m.id) AS islocal, m.delivery AS delivery, a.type, r.recipients, m.lastlogin, a.domain_id
          FROM ((domaines d, address a LEFT JOIN mailbox m ON m.address_id=a.id) LEFT JOIN dovecot_quota q ON CONCAT(a.address,'@',d.domaine)  = q.user) LEFT JOIN recipient r ON r.address_id=a.id
          WHERE " . $where . " AND d.id=a.domain_id " . $limit . " ;", $query_args);
         if (!$db->next_record()) {
             $msg->raise("ERROR", "mail", _("No email found for this query"));
             return array();
         }
-        $res = array();
-        do {
+	$res = array();
+	do {
             $details = $db->Record;
             // if necessary, fill the typedata with data from hooks ...
+	    if ($details['islocal'] ) {
+		   if ($details['delivery'] == "dovecot") {
+			$details['islocal'] = 1;
+		   } else {
+			$details['islocal'] = 2;
+		   }
+	    }
             if ($details["type"]) {
                 $result = $hooks->invoke("hook_mail_get_details", array($details)); // Will fill typedata if necessary
                 $details["typedata"] = implode("<br />", $result);
@@ -421,12 +428,20 @@ ORDER BY
         }
 
         // We fetch all the informations for that email: these will fill the hastable : 
-        $db->query("SELECT a.id, a.address, a.password, a.enabled, d.domaine AS domain, m.path, m.quota, m.quota*1024*1024 AS quotabytes, q.quota_dovecot AS used, NOT ISNULL(m.id) AS islocal, a.type, r.recipients, m.lastlogin, a.mail_action, m.mail_action AS mailbox_action FROM ((domaines d, address a LEFT JOIN mailbox m ON m.address_id=a.id) LEFT JOIN dovecot_quota q ON CONCAT(a.address,'@',d.domaine)  = q.user) LEFT JOIN recipient r ON r.address_id=a.id WHERE a.id= ? AND d.id=a.domain_id;", array($mail_id));
+        $db->query("SELECT a.id, a.address, a.password, a.enabled, d.domaine AS domain, m.path, m.quota, m.quota*1024*1024 AS quotabytes, q.quota_dovecot AS used, NOT ISNULL(m.id) AS islocal, a.type, r.recipients, m.lastlogin, a.mail_action, m.mail_action AS mailbox_action, m.delivery AS delivery FROM ((domaines d, address a LEFT JOIN mailbox m ON m.address_id=a.id) LEFT JOIN dovecot_quota q ON CONCAT(a.address,'@',d.domaine)  = q.user) LEFT JOIN recipient r ON r.address_id=a.id WHERE a.id= ? AND d.id=a.domain_id;", array($mail_id));
         if (!$db->next_record()) {
             return false;
-        }
+	}
         $details = $db->Record;
-        // if necessary, fill the typedata with data from hooks ...
+	if ($details['islocal'] ) {
+		if ($details['delivery'] == "dovecot") {
+			$details['islocal'] = 1;
+		} else {
+			$details['islocal'] = 2;
+		}
+
+	}
+	// if necessary, fill the typedata with data from hooks ...
         if ($details["type"]) {
             $result = $hooks->invoke("hook_mail_get_details", array($mail_id)); // Will fill typedata if necessary
             $details["typedata"] = implode("<br />", $result);
@@ -674,6 +689,10 @@ ORDER BY
      * @param string $recipients string recipients, one mail per line.
      * @return boolean if the email has been properly edited
      * or false if an error occured ($msg is filled accordingly)
+     *
+     * islocal: 0 == redirection
+     *          1 == local
+     *          2 == local avec fwtogmail en outbound
      */
     function set_details($mail_id, $islocal, $quotamb, $recipients, $delivery = "dovecot", $dontcheck = false) {
         global $msg, $db;
@@ -681,11 +700,11 @@ ORDER BY
         if (!($me = $this->get_details($mail_id))) {
             return false;
         }
-        if ($me["islocal"] && !$islocal) {
+	if (($me["islocal"] == 1 or $me["islocal"] == 2) && $islocal == 0) {
             // delete pop
             $db->query("UPDATE mailbox SET mail_action='DELETE' WHERE address_id= ? ;", array($mail_id));
         }
-        if (!$me["islocal"] && $islocal) {
+	if (($me["islocal"] == 0 || $me["islocal"] == 2) && $islocal == 1) {
             // create pop
             $path = "";
             if ($delivery == "dovecot") {
@@ -705,33 +724,40 @@ ORDER BY
             }
             $db->query("INSERT INTO mailbox SET address_id= ? , delivery= ?, path= ? ;", array($mail_id, $delivery, $path));
         }
-        if ($me["islocal"] && $islocal && $me["mailbox_action"] == "DELETE") {
+        if ($me["islocal"] == 1 && $islocal == 1 && $me["mailbox_action"] == "DELETE") {
             $db->query("UPDATE mailbox SET mail_action='OK' WHERE mail_action='DELETE' AND address_id= ? ;", array($mail_id));
         }
 
-        if ($islocal) {
+       if ($islocal == 2){
+            if ($me['islocal'] == 0) {
+                $db->query("INSERT INTO mailbox SET address_id= ? , delivery= ?, path= ? ;", array($mail_id, variable_get("custom_delivery"), ""));
+           } else {
+               $db->query("UPDATE mailbox SET delivery= ? WHERE address_id= ? ;", array(variable_get("custom_delivery"), $mail_id));
+            }
+	}
+        if ($islocal == 1) {
             if ($quotamb != 0 && $quotamb < (intval($me["used"] / 1024 / 1024) + 1)) {
                 $quotamb = intval($me["used"] / 1024 / 1024) + 1;
                 $msg->raise("ALERT", "mail", _("You set a quota smaller than the current mailbox size. Since it's not allowed, we set the quota to the current mailbox size"));
             }
-            $db->query("UPDATE mailbox SET quota= ? WHERE address_id= ? ;", array($quotamb, $mail_id));
+            $db->query("UPDATE mailbox SET delivery= ?, quota= ? WHERE address_id= ? ;", array("dovecot", $quotamb, $mail_id));
         }
 
         $recipients = preg_replace('/[\r\t\s]/', "\n", $recipients); // Handle space AND new line
         $r = explode("\n", $recipients);
         $red = "";
         foreach ($r as $m) {
-            $m = trim($m);
-            if ($m && ( filter_var($m, FILTER_VALIDATE_EMAIL) || $dontcheck)  // Recipient Email is valid
-            && $m != ($me["address"] . "@" . $me["domain"])) {  // And not myself (no loop allowed easily ;) )
-                $red.=$m . "\n";
+           $m = trim($m);
+           if ($m && ( filter_var($m, FILTER_VALIDATE_EMAIL) || $dontcheck)  // Recipient Email is valid
+             && $m != ($me["address"] . "@" . $me["domain"])) {  // And not myself (no loop allowed easily ;) )
+              $red.=$m . "\n";
             }
         }
         $db->query("DELETE FROM recipient WHERE address_id= ? ;", array($mail_id));
         if (isset($red) && $red) {
-            $db->query("INSERT INTO recipient SET address_id= ?, recipients= ? ;", array($mail_id, $red));
+           $db->query("INSERT INTO recipient SET address_id= ?, recipients= ? ;", array($mail_id, $red));
         }
-        if (!$islocal && !$red) {
+	if (!$islocal && !$red) {
             $msg->raise("ALERT", "mail", _("Warning: you created an email which is not an alias, and not a POP/IMAP mailbox. This is certainly NOT what you want to do. To fix this, edit the email address and check 'Yes' in POP/IMAP account, or set some recipients in the redirection field."));
         }
         return true;

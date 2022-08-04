@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `mailbox` (
   `update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Update date, for technical usage only.
   `bytes` bigint(20) NOT NULL DEFAULT '0', -- number of bytes in the mailbox, filled by dovecot
   `messages` int(11) NOT NULL DEFAULT '0', -- number of messages in the mailbox, filled by dovecot 
-  `lastlogin` datetime NOT NULL DEFAULT '0000-00-00 00:00:00', -- Last login, filled by dovecot
+  `lastlogin` datetime NOT NULL DEFAULT '0', -- Last login, filled by dovecot
   `mail_action` enum('OK','DELETE','DELETING') NOT NULL default 'OK', -- mail_action is DELETE or DELETING when deleting a mailbox by cron
   PRIMARY KEY (`id`),
   UNIQUE KEY `address_id` (`address_id`)
@@ -770,43 +770,3 @@ CREATE TABLE IF NOT EXISTS `csrf` (
 -- make it re-exec-proof
 DELETE FROM alternc_status WHERE name='alternc_version';
 INSERT INTO alternc_status SET name='alternc_version',value='3.4.8.sql';
-
--- SSL managment
-CREATE TABLE `certificates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` int(10) unsigned NOT NULL,
-  `status` tinyint(3) unsigned NOT NULL,
-  `shared` tinyint(3) unsigned NOT NULL,
-  `fqdn` varchar(255) NOT NULL,
-  `altnames` text NOT NULL,
-  `validstart` datetime NOT NULL,
-  `validend` datetime NOT NULL,
-  `sslcsr` text NOT NULL,
-  `sslkey` text NOT NULL,
-  `sslcrt` text NOT NULL,
-  `sslchain` text NOT NULL,
-  `ssl_action` varchar(32) NOT NULL,
-  `ssl_result` varchar(32) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `uid` (`uid`),
-  KEY `ssl_action` (`ssl_action`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `certif_alias` (
-  `name` varchar(255) NOT NULL,
-  `content` text NOT NULL,
-  `uid` int(10) unsigned NOT NULL,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`name`),
-  KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Global aliases defined for SSL certificates FILE validation processes';
-
-CREATE TABLE IF NOT EXISTS `certif_hosts` (
-  `certif` int(10) unsigned NOT NULL,
-  `sub` int(10) unsigned NOT NULL,
-  `uid` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`certif`,`sub`),
-  KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VHosts of a user using defined or self-signed certificates';
-
-INSERT IGNORE INTO defquotas VALUES ('ssl', 0, 'default');

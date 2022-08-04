@@ -32,7 +32,7 @@ $fields = array (
 		 "passconf" => array("post","string",""),
 		 "quotamb" => array("post","integer",0),
 		 "enabled" => array("post","boolean",true),
-		 "islocal" => array("post","boolean",true),
+		 "islocal" => array("post","integer",1),
 		 "recipients" => array("post","string",""),
 		 );
 
@@ -56,8 +56,8 @@ if (!$res=$mail->get_details($mail_id)) {
     exit();
   } else {
     $canbeempty = ($islocal != 1 || ($islocal == 1 && !$new_account))?true:false;
-    if ($new_account || !empty($pass) || $islocal != 1) {
-      if ($islocal != 1)
+    if ($new_account || !empty($pass) || $islocal == 0) {
+      if ($islocal == 0)
         $pass = ""; 
 
       if (!$mail->set_passwd($mail_id,$pass,$canbeempty)) { /* SET THE PASSWORD */
