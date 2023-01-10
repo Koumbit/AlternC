@@ -643,7 +643,7 @@ class m_admin {
         $before_add_hook_data = $hooks->invoke('hook_before_alternc_add_member', [$login]);
         foreach($before_add_hook_data as $create) {
           if(!$create) {
-              $msg->raise("ERROR", "admin", _("-- I cannot create this account --"));
+              // One hook returned false, this account should not be created.
               return false;
           }
         }
