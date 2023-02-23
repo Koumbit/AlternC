@@ -59,8 +59,8 @@ $dom->unlock();
 		exit();
 	} else {
         $t = time();
-	// TODO: we assume the cron job is at every 5 minutes
-        $msg->raise("INFO", "dom", _("The modifications will take effect at %s.  Server time is %s."), array(date('H:i:s', ($t-($t%300)+300)), date('H:i:s', $t))); 
+	// TODO: we assume the cron job is at every 15 minutes
+        $msg->raise("INFO", "dom", _("The modifications will take effect at %s.  Server time is %s."), array(date('H:i:s', ($t-($t%900)+900)), date('H:i:s', $t))); 
 	echo $msg->msg_html_all();
 	}
 ?>
