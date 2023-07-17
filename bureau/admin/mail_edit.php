@@ -111,7 +111,7 @@ echo $msg->msg_html_all();
 <?php } ?>
   <tr><th colspan="2"><b><?php __("Is it a redirection to other email addresses?"); ?></b></th></tr>
 
-  <tr><td style="width: 50%; text-align: justify"><label for="recipients"><?php __("If you want to send emails received on this address to other addresses, even outside this server, enter those recipients here."); ?></label></td><td>(<?php __("one recipient per line"); ?>)<br /><textarea class="int" cols="32" rows="5" name="recipients" id="recipients"><?php echo $recipients; ?></textarea></td></tr>
+  <tr><td style="width: 50%; text-align: justify"><label for="recipients"><?php __("If you want to send emails received on this address to other addresses, even outside this server, enter those recipients here."); ?></label><br/><br/><p class="alert alert-warning">Veuillez noter que la livraison des courriels vers une adresse de redirection externe <b>ne peut être garantie</b>. Le fournisseur du courriel de destination pourrait les rejeter.<br/><br/>Please note that delivery of emails redirected to external addresses <b>can't be guaranteed</b> as the recipient address provider may reject them.<br/><br/><a href="https://www.koumbit.org/fr/content/problemes-avec-la-redirection-de-courriels" target="_blank">En savoir plus</a> / <a href="https://www.koumbit.org/en/content/problems-email-redirections" target="_blank">Learn more</a></p></td><td>(<?php __("one recipient per line"); ?>)<br /><textarea class="int" cols="32" rows="5" name="recipients" id="recipients"><?php echo $recipients; ?></textarea></td></tr>
 <?php 
    
    $html=$hooks->invoke("hook_mail_edit_html",array($mail_id,$type));
