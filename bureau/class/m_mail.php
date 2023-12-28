@@ -485,7 +485,8 @@ ORDER BY
         }
         $db->query("SELECT domaine FROM domaines WHERE id= ? ;", array($dom_id));
         if ($db->next_record()) {
-            $db->query("UPDATE sub_domaines SET web_action='DELETE' WHERE domaine= ? AND type='txt' AND (sub='' AND valeur LIKE 'v=spf1 %') OR (sub='_dmarc' AND valeur LIKE 'v=dmarc1;%');", array($db->Record["domaine"]));
+            $db->query("UPDATE sub_domaines SET web_action='DELETE' WHERE domaine= ? AND type='txt' AND sub='' AND valeur LIKE 'v=spf1 %';", array($db->Record["domaine"])); 
+            $db->query("UPDATE sub_domaines SET web_action='DELETE' WHERE domaine= ? AND type='txt' AND sub='_dmarc' AND valeur LIKE 'v=dmarc1;%';", array($db->Record["domaine"]));
             $db->query("UPDATE sub_domaines SET web_action='DELETE' WHERE domaine= ? AND (type='defmx' OR type='defmx2');", array($db->Record["domaine"]));
             $db->query("UPDATE domaines SET dns_action='UPDATE' WHERE id= ? ;", array($dom_id));
         }
