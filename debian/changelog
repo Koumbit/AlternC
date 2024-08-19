@@ -1,3 +1,8 @@
+alternc (3.5.0~nmu1) stable; urgency=low
+
+  * AlternC 3.5 for Bullseye
+ -- Hubert Pineault <hubert@koumbit.org>  Tue, 19 Aug 2024 15:53:00 -0400
+
 alternc (3.5.0~rc1) stable; urgency=low
 
   * AlternC 3.5 for Jessie & Stretch
