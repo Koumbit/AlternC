@@ -1,0 +1,11 @@
+FROM docker.io/debian:bookworm-slim
+RUN apt-get update
+
+# Install our different PHP versions
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install php-cli phpunit
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install php-codesniffer
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install shellcheck
+RUN mkdir /target
+RUN mkdir /output
+WORKDIR /target
+CMD /bin/bash
